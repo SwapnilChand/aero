@@ -44,12 +44,37 @@ for (let row = 0; row < rows; row++) {
     windParticles.add(particle);
   }
 }
+
+const carBounds = {
+  minX: -1.5,
+  maxX: 1.5,
+  minY: -1,
+  maxY: 1,
+};
+
 function animate() {
   requestAnimationFrame(animate);
+
   windParticles.children.forEach((p) => {
+    // Move particles right
     p.position.x += 0.02;
+
+    // Wrap particles to left
     if (p.position.x > 6) p.position.x = -6;
+
+    // Check if inside bounding box
+    if (
+      p.position.x > carBounds.minX &&
+      p.position.x < carBounds.maxX &&
+      p.position.y > carBounds.minY &&
+      p.position.y < carBounds.maxY
+    ) {
+      // Nudge particles upward or downward to "flow" around the car
+      const centerY = (carBounds.minY + carBounds.maxY) / 2;
+      p.position.y += p.position.y > centerY ? 0.01 : -0.01;
+    }
   });
+
   renderer.render(scene, camera);
 }
 animate();
